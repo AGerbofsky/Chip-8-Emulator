@@ -1,0 +1,135 @@
+
+
+
+    ==========================================================================================
+        Understanding The Basics: What is Chip8
+    ==========================================================================================
+
+    - Chip8is an interpreter from the mid 1970s.    
+    - Chip8 was designed to make the developement of games easier.
+    - Chip8 is essentially a virtual machine, think of the JVM but some thing significantly
+      more base.
+    - Chip8 interpreters can play many classic video-games such as Pong, Tetris, and Space
+      Invaders.
+      
+      
+      
+    ==========================================================================================      
+        The Memory Map
+    ==========================================================================================
+    
+    +--------------------------+
+    |                          |  - $0FFF: End of Addressable Memory  
+    +--------------------------+
+    |                          |  - $(0FFF:0200): Program Data   
+    |                          |
+    |                          |
+    |                          |
+    |                          |
+    |                          |
+    |                          |
+    |                          |
+    |                          |
+    |                          |
+    |                          |
+    |                          |
+    |                          |
+    |                          |
+    |                          |
+    |                          |
+    |                          |
+    |                          |
+    +--------------------------+   - $0200: Start of Program Memory
+    |                          |   - $(01FF:00): Reserved Memory
+    |                          |
+    |                          |
+    |                          |
+    |                          |
+    |                          |
+    |                          |
+    |                          |
+    +--------------------------+   - $0000: Start of Addressable Memory
+    
+    The Chip8 also has a stack that is an array of 16 16-bit words, which is used to store
+    return addresses for branch and conditional jmp operations. These addresses are used to
+    store the address of subroutines, in which the Chip8 architecture provides up-to 16
+    nested subroutines.
+    
+    NOTE: The stack is not part of the main memory map, it is its own intity that would be
+          included ON-DYE if it were ever implemented in silicon.
+
+         
+         
+    ==========================================================================================
+        Chip8 Register File
+    ==========================================================================================
+          
+    The Chip8 architecture provides for 16 8-bit wide general-purpose registers. These are:
+    
+     GPRs:
+    +-----------------+         In C, these registers should be implemented as a character
+    | V0, V1, V2, V3, |         array with the index size of 16.
+    | V4, V5, V6, V7, |
+    | V8, V9, VA, VB, |             char V0 = malloc(16 * sizeof(char)):
+    | VC, VD, VE, VF  |
+    +-----------------+         Chip8 also has a register "I" which is used to store memory
+                                addresses. This can be thought of as the Instruction Register
+                                or the Mass Address Register.
+                                
+    Among these registers are the following, additional registers:
+    
+        - PC (16-bit): The Chip8 takes 2-bytes for each instruction, thus the program counter
+                        will be advanced by 1-word, upon every instruction fetch.
+                        
+        - SP (8-Bit):  This is the "Stack Pointer" of the Chip8. Points to stack.
+        
+        - Sound Timer and Delay Timer (8-bit):
+            Self explanitory; when these registers have a value {value | value > 0} they will
+            decrement at a rate of 60Hz
+          
+          
+          
+    ==========================================================================================
+        Chip8 Display
+    ==========================================================================================
+    
+    The Chip8 system features a display consisiting of 64 x 32 Pixels, which is 2048 bytes.
+    The display does not feature any sort of color palate; the display is monochrome only.
+    
+    To draw images to this display we will do so via byte-coded sprites, which are an array
+    of up-to 8x15 bytes. If a sprite overflosw the screen it wraps back around to the other
+    side.
+        
+    Example of a Sprite:
+    --------------------
+    
+    **** | 11110000 | $F0       Notice here that each binary bit represents exactly one pixel
+    *  * | 10010000 | $90       of the sprite bitmap.
+    *  * | 10010000 | $90
+    *  * | 10010000 | $90
+    **** | 11110000 | $90
+    
+    
+    
+    ==========================================================================================
+        The System Keyboard
+    ==========================================================================================    
+    
+    The Chip8 has a keyboard consisting of 16-keys. This is your standard 70's hex keypad.
+    You can represent this in your emulator as a 16-byte array. With a true value representing
+    a key actuation, and zero representing no input.
+    
+    NOTE: I would like to multiplex the keyboard input so that multiple keys can be pressed
+          at a time.
+          
+    ==========================================================================================
+        The Chip8 Instruction Set Architecture
+    ==========================================================================================    
+    
+    The Chip8 ISA consists of 36 operations, each being 2-bytes long. Included in these
+    instructions are mathematical, logical, and specific instructions pertaining to display
+    registers.
+    
+    ISA Instruction Table:
+    ----------------------
+    
