@@ -12,4 +12,4 @@ What I learned:
   - Defininately polished up my memory management, and use of pointers.
   - Gained some good experience using SDL2.
   - Became much more comfortable in managing multiple sourcefile projects.
-  - Solidified Computer Architecture concepts learned in the classroom by implementing them in the "real-world" 
+  - Solidified Computer Architecture concepts learned in the classroom by implementing them in the "real-world".
